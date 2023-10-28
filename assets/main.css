@@ -10,7 +10,7 @@
 :root {
     --color-bg-primary: #0C1325;
     --color-bg-secondary: #0F172A;
-    --color-bg-tertiary: #1B2637;
+    --color-bg-tertiary: #1E293B;
     --color-primary: #2DD4BF;
     --color-text: white;
     --color-text-alt: #6A778B;
@@ -28,8 +28,4 @@ li {
 a {
     color: inherit;
     text-decoration: none;
-}
-
-body {
-    height: 200vh;
 }
