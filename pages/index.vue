@@ -16,7 +16,7 @@
                 <div class="summary-card-txt">
                     <span class="summary-card-title">
                         Trade Expectancy
-                        <UTooltip text="">
+                        <UTooltip text="Average result value.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
@@ -27,7 +27,7 @@
                 <div class="summary-card-txt">
                     <span class="summary-card-title">
                         Win Rate
-                        <UTooltip text="">
+                        <UTooltip text="Average chance of a winning trade.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
@@ -38,7 +38,7 @@
                 <div class="summary-card-txt">
                     <span class="summary-card-title">
                         Profit Factor
-                        <UTooltip text="">
+                        <UTooltip text="Average risk/reward ratio of a trade.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
