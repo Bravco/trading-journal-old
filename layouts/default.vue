@@ -16,6 +16,7 @@
 <style scoped>
     nav {
         padding: 1rem 5%;
+        margin-bottom: 2rem;
     }
 
     .logo {

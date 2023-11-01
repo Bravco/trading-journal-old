@@ -1,43 +1,43 @@
 <template>
     <div>
-        <div class="summary">
-            <div class="container summary-card">
-                <div class="summary-card-txt">
-                    <span class="summary-card-title">
+        <div class="main">
+            <div class="container summary-container">
+                <div class="summary-container-txt">
+                    <span class="summary-container-title">
                         Profile Value
                         <UTooltip text="The current total value of your portfolio.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
-                    <span class="summary-card-value">€ 1458.16</span>
+                    <span class="summary-container-value">€ 1458.16</span>
                 </div>
-                <button class="summary-card-btn">
+                <button class="summary-container-btn">
                     <Icon name="ph:bank-duotone"/>
                 </button>
             </div>
-            <div class="container summary-card">
-                <div class="summary-card-txt">
-                    <span class="summary-card-title">
+            <div class="container summary-container">
+                <div class="summary-container-txt">
+                    <span class="summary-container-title">
                         Trade Expectancy
                         <UTooltip text="Average result value.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
-                    <span class="summary-card-value">€ +17.84</span>
+                    <span class="summary-container-value">€ +17.84</span>
                 </div>
-                <button class="summary-card-btn">
+                <button class="summary-container-btn">
                     <Icon name="ph:chart-line-duotone"/>
                 </button>
             </div>
-            <div class="container summary-card">
-                <div class="summary-card-txt">
-                    <span class="summary-card-title">
+            <div class="container summary-container">
+                <div class="summary-container-txt">
+                    <span class="summary-container-title">
                         Win Rate
                         <UTooltip text="Average chance for a win trade.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
-                    <span class="summary-card-value">% 25.00</span>
+                    <span class="summary-container-value">% 25.00</span>
                 </div>
                 <v-progress-circular
                     :model-value="25"
@@ -48,15 +48,15 @@
                     style="stroke-linecap: round;"
                 />
             </div>
-            <div class="container summary-card">
-                <div class="summary-card-txt">
-                    <span class="summary-card-title">
+            <div class="container summary-container">
+                <div class="summary-container-txt">
+                    <span class="summary-container-title">
                         Profit Factor
                         <UTooltip text="Average risk/reward ratio of a trade.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
-                    <span class="summary-card-value">0.43</span>
+                    <span class="summary-container-value">0.43</span>
                 </div>
                 <v-progress-linear
                     :model-value="43"
@@ -69,46 +69,54 @@
                     style="left: 0; transform: translateX(0);"
                 />
             </div>
+            <div class="container calendar"></div>
+            <div class="container"></div>
         </div>
     </div>
 </template>
 
 <style scoped>
-    .summary {
+    .main {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
         gap: 2rem;
     }
 
-    .summary-card {
+    .container {
         width: 100%;
+        padding: 2rem;
+        background-color: var(--color-bg-secondary);
+        border: 1px solid var(--color-bg-tertiary);
+        border-radius: .5rem;
+    }
+
+    .summary-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
-        padding: 2rem;
     }
 
-    .summary-card-txt {
+    .summary-container-txt {
         min-width: max-content;
         display: flex;
         flex-direction: column;
         gap: .5rem;
     }
 
-    .summary-card-title {
+    .summary-container-title {
         display: flex;
         align-items: center;
         gap: .5rem;
         color: var(--color-text-alt);
     }
 
-    .summary-card-value {
+    .summary-container-value {
         font-size: 1.5rem;
         font-weight: bold;
     }
     
-    .summary-card-btn {
+    .summary-container-btn {
         width: 3rem;
         height: 3rem;
         display: grid;
@@ -117,5 +125,9 @@
         color: var(--color-primary);
         font-size: 1.5rem;
         border-radius: .5rem;
+    }
+
+    .calendar {
+        grid-column: span 3;
     }
 </style>
