@@ -33,12 +33,20 @@
                 <div class="summary-card-txt">
                     <span class="summary-card-title">
                         Win Rate
-                        <UTooltip text="Average chance of a winning trade.">
+                        <UTooltip text="Average chance for a win trade.">
                             <Icon name="ph:info-duotone"/>
                         </UTooltip>
                     </span>
                     <span class="summary-card-value">% 25.00</span>
                 </div>
+                <v-progress-circular
+                    :model-value="25"
+                    color="var(--color-primary)"
+                    bg-color="var(--color-red)"
+                    :size="96"
+                    :width="8"
+                    style="stroke-linecap: round;"
+                />
             </div>
             <div class="container summary-card">
                 <div class="summary-card-txt">
@@ -50,6 +58,16 @@
                     </span>
                     <span class="summary-card-value">0.43</span>
                 </div>
+                <v-progress-linear
+                    :model-value="43"
+                    color="var(--color-primary)"
+                    bg-color="var(--color-red)"
+                    :height="8"
+                    :bg-opacity="1"
+                    :rounded="true"
+                    :rounded-bar="true"
+                    style="left: 0; transform: translateX(0);"
+                />
             </div>
         </div>
     </div>
@@ -57,7 +75,8 @@
 
 <style scoped>
     .summary {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
         gap: 2rem;
     }
 
@@ -66,10 +85,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 1rem;
         padding: 2rem;
     }
 
     .summary-card-txt {
+        min-width: max-content;
         display: flex;
         flex-direction: column;
         gap: .5rem;
