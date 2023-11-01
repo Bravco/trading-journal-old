@@ -69,8 +69,24 @@
                     style="left: 0; transform: translateX(0);"
                 />
             </div>
-            <div class="container calendar"></div>
-            <div class="container"></div>
+            <div class="container calendar-container">
+                <div class="calendar-header">
+                    <button class="calendar-header-btn">
+                        <Icon name="ph:caret-left-duotone"/>
+                    </button>
+                    <button class="calendar-header-btn">
+                        <Icon name="ph:caret-right-duotone"/>
+                    </button>
+                    <span class="calendar-header-title">November 2023</span>
+                </div>
+                <hr class="calendar-divider">
+            </div>
+            <div class="container trades-container">
+                <div class="trades-header">
+                    <span class="trades-header-title">01.11.2023</span>
+                </div>
+                <hr class="trades-divider">
+            </div>
         </div>
     </div>
 </template>
@@ -84,7 +100,6 @@
 
     .container {
         width: 100%;
-        padding: 2rem;
         background-color: var(--color-bg-secondary);
         border: 1px solid var(--color-bg-tertiary);
         border-radius: .5rem;
@@ -95,6 +110,7 @@
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
+        padding: 2rem;
     }
 
     .summary-container-txt {
@@ -127,7 +143,36 @@
         border-radius: .5rem;
     }
 
-    .calendar {
+    .calendar-container, .trades-container {
+        position: relative;
+        padding: 1rem 2rem 2rem 2rem;
+    }
+
+    .calendar-container {
         grid-column: span 3;
+    }
+
+    .calendar-header, .trades-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .calendar-header-btn {
+        width: 1rem;
+        height: 1rem;
+        display: grid;
+        place-items: center;
+    }
+
+    .calendar-header-title {
+        margin-left: 1rem;
+    }
+
+    .calendar-divider, .trades-divider {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        border-color: var(--color-bg-tertiary);
     }
 </style>
