@@ -80,10 +80,18 @@
                     <span class="calendar-header-title">November 2023</span>
                 </div>
                 <hr class="calendar-divider">
+                <div class="calendar-day-grid">
+                    <span v-for="day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="day" class="calendar-weekday">
+                        {{ day }}
+                    </span>
+                    <div v-for="_ in 5*7" class="calendar-day">
+                        
+                    </div>
+                </div>
             </div>
             <div class="container trades-container">
                 <div class="trades-header">
-                    <span class="trades-header-title">01.11.2023</span>
+                    <span>01.11.2023</span>
                 </div>
                 <hr class="trades-divider">
             </div>
@@ -174,5 +182,28 @@
         position: absolute;
         left: 0;
         border-color: var(--color-bg-tertiary);
+    }
+
+    .calendar-day-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1rem;
+        padding-top: 1rem;
+    }
+
+    .calendar-weekday, .calendar-day {
+        border: 1px solid var(--color-bg-tertiary);
+        border-radius: .5rem;
+    }
+
+    .calendar-weekday {
+        padding: .25rem 0;
+        text-align: center;
+        font-weight: bold;
+        color: var(--color-text-alt);
+    }
+
+    .calendar-day {
+        padding: 3rem;
     }
 </style>
