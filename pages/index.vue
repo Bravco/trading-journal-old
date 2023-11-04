@@ -71,33 +71,106 @@
             </div>
             <div class="container calendar-container">
                 <div class="calendar-header">
-                    <button class="calendar-header-btn">
+                    <button @click="previousMonth" class="calendar-header-btn">
                         <Icon name="ph:caret-left-duotone"/>
                     </button>
-                    <button class="calendar-header-btn">
+                    <button @click="nextMonth" class="calendar-header-btn">
                         <Icon name="ph:caret-right-duotone"/>
                     </button>
-                    <span class="calendar-header-title">November 2023</span>
+                    <span class="calendar-header-title">
+                        {{ selectedDate.toLocaleString('en-us',{month:'short', year:'numeric'}) }}
+                    </span>
                 </div>
                 <hr class="calendar-divider">
                 <div class="calendar-day-grid">
-                    <span v-for="day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="day" class="calendar-weekday">
-                        {{ day }}
+                    <span v-for="weekday in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="weekday" class="calendar-weekday">
+                        {{ weekday }}
                     </span>
-                    <div v-for="_ in 5*7" class="calendar-day">
-                        
-                    </div>
+                    <button 
+                        v-for="date in viewedDates" 
+                        :key="date.getTime()"
+                        @click="selectedDate = date"
+                        :disabled="date.getMonth() !== selectedDate.getMonth()"
+                        :class="[
+                            'calendar-day',
+                            Math.round(Math.random()) ? (Math.round(Math.random()) ? 'win' : 'lose') : '',
+                            {'selected': date.toDateString() === selectedDate.toDateString()},
+                            {'irrelevant': date.getMonth() !== selectedDate.getMonth()}
+                        ]"
+                    >
+                        <span class="calendar-day-index">{{ date.getDate() }}</span>
+                        <span class="calendar-day-result">€ +16.77</span>
+                        <span class="calendar-day-tradecount">2 trades</span>
+                    </button>
                 </div>
             </div>
             <div class="container trades-container">
                 <div class="trades-header">
-                    <span>01.11.2023</span>
+                    <span>{{ selectedDate.toDateString() }}</span>
                 </div>
                 <hr class="trades-divider">
             </div>
         </div>
     </div>
 </template>
+
+<script lang="ts" setup>
+    const selectedDate = useState<Date>("selectedDate", () => new Date());
+
+    const viewedDates = computed(() => {
+        return getMonthDates(selectedDate.value.getFullYear(), selectedDate.value.getMonth()+1);
+    });
+
+    function getMonthDates(year : number, month : number) : Date[] {
+        const currentDate = new Date(year, month-1, 1);
+        const dates : Date[] = [];
+
+        while (currentDate.getDay() !== 1) {
+            currentDate.setDate(currentDate.getDate()-1);
+        }
+
+        for (let i = 0; i < 7*6; i++) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate()+1);
+        }
+
+        return dates;
+    }
+
+    function previousMonth() {
+        let currentMonth : number = selectedDate.value.getMonth();
+        if (currentMonth === 0) {
+            selectedDate.value = new Date(
+                selectedDate.value.getFullYear()-1,
+                11,
+                selectedDate.value.getDate()
+            );
+        } else {
+            selectedDate.value = new Date(
+                selectedDate.value.getFullYear(),
+                currentMonth-1,
+                selectedDate.value.getDate()
+            );
+        }
+    }
+
+    function nextMonth() {
+        let currentMonth : number = selectedDate.value.getMonth();
+        if (currentMonth === 11) {
+            selectedDate.value = new Date(
+                selectedDate.value.getFullYear()+1,
+                0,
+                selectedDate.value.getDate()
+            );
+        } else {
+            selectedDate.value = new Date(
+                selectedDate.value.getFullYear(),
+                currentMonth+1,
+                selectedDate.value.getDate()
+            );
+        }
+    }
+</script>
 
 <style scoped>
     .main {
@@ -188,7 +261,7 @@
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 1rem;
-        padding-top: 1rem;
+        padding-top: 2rem;
     }
 
     .calendar-weekday, .calendar-day {
@@ -204,6 +277,61 @@
     }
 
     .calendar-day {
-        padding: 3rem;
+        min-height: 6rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0 1rem;
+    }
+
+    .calendar-day.irrelevant > * {
+        display: none;
+    }
+
+    .calendar-day:not(.irrelevant) {
+        border-color: var(--color-text-alt);
+    }
+
+    .calendar-day:not(.irrelevant).win {
+        background-color: var(--color-primary-alt);
+        border-color: transparent;
+    }
+
+    .calendar-day:not(.irrelevant).lose {
+        background-color: var(--color-red-alt);
+        border-color: transparent;
+    }
+
+    .calendar-day.selected {
+        border-color: var(--color-text);
+    }
+
+    .calendar-day.selected.win {
+        border-color: var(--color-primary);
+    }
+
+    .calendar-day.selected.lose {
+        border-color: var(--color-red);
+    }
+
+    .calendar-day-index, .calendar-day-tradecount {
+        font-size: 12px;
+    }
+
+    .calendar-day-index {
+        padding-bottom: 1rem;
+    }
+
+    .calendar-day-result {
+        font-weight: bold;
+    }
+
+    .calendar-day.win .calendar-day-result {
+        color: var(--color-primary);
+    }
+
+    .calendar-day.lose .calendar-day-result {
+        color: var(--color-red);
     }
 </style>

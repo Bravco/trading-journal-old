@@ -12,9 +12,11 @@
     --color-bg-secondary: #0F172A;
     --color-bg-tertiary: #1E293B;
     --color-primary: #2DD4BF;
+    --color-primary-alt: rgba(43, 212, 189, .2);
     --color-text: white;
     --color-text-alt: #6A778B;
     --color-red: #FF6388;
+    --color-red-alt: rgba(255, 97, 134, .2);
 }
 
 body {
@@ -23,7 +25,7 @@ body {
 }
 
 main {
-    padding: 0 5%;
+    padding: 2rem 5%;
 }
 
 li {
