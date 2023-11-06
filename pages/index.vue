@@ -146,7 +146,7 @@
                                 [{
                                     label: 'View',
                                     icon: 'i-ph-eye-duotone',
-                                    click: () => openModal(row, true),
+                                    click: () => console.log(`Edti ${row}`),
                                 }],
                                 [{
                                     label: 'Delete',
@@ -159,16 +159,16 @@
                         </UDropdown>
                     </template>
                 </UTable>
-                <UButton class="new-trade-btn" size="md">
+                <UButton @click="openModal" class="new-trade-btn" size="md">
                     <UIcon name="i-ph-plus-duotone"/>New Trade
                 </UButton>
             </div>
         </div>
-        <UModal v-model="modal" :prevent-close="isEditingModalTrade">
+        <UModal v-model="modal" prevent-close>
             <UCard>
                 <template #header>
                     <div class="modal-header">
-                        <h1 class="modal-header-title">{{ modalTrade }}</h1>
+                        <h1 class="modal-header-title">New Trade</h1>
                         <UButton
                             icon="i-ph-x-duotone"
                             variant="ghost"
@@ -247,8 +247,6 @@
 
     const selectedDate = ref<Date>(new Date());
     const modal = ref<boolean>(false);
-    const modalTrade = ref<any>(null);
-    const isEditingModalTrade = ref<boolean>(false);
 
     const viewedDates = computed(() => {
         return getMonthDates(selectedDate.value.getFullYear(), selectedDate.value.getMonth()+1);
@@ -304,15 +302,11 @@
         }
     }
 
-    function openModal(trade : any, isEditing : boolean = false) {
-        isEditingModalTrade.value = isEditing;
-        modalTrade.value = trade;
+    function openModal() {
         modal.value = true;
     }
 
     function closeModal() {
-        isEditingModalTrade.value = false;
-        modalTrade.value = null;
         modal.value = false;
     }
 </script>
