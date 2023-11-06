@@ -5,5 +5,7 @@ export default defineAppConfig({
         tooltip: { background: "bg-gray-800" },
         dropdown: { background: "bg-gray-800" },
         card: { background: "bg-gray-900" },
+        input: { default: { color: "gray" } },
+        select: { default: { color: "gray" } },
     },
 });

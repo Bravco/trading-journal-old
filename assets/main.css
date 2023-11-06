@@ -26,3 +26,14 @@ body {
 main {
     padding: 2rem 5%;
 }
+
+input[type="datetime-local"] {
+    flex-direction: row-reverse;
+    gap: .5rem;
+    color-scheme: dark;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    scale: 1.25;
+    cursor: pointer;
+}

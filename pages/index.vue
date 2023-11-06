@@ -143,11 +143,18 @@
                     <template #actions-data="{ row }">
                         <UDropdown
                             :items="[
-                                [{
-                                    label: 'View',
-                                    icon: 'i-ph-eye-duotone',
-                                    click: () => console.log(`Edti ${row}`),
-                                }],
+                                [
+                                    {
+                                        label: 'View',
+                                        icon: 'i-ph-eye-duotone',
+                                        click: () => console.log(`View ${row}`),
+                                    },
+                                    {
+                                        label: 'Edit',
+                                        icon: 'i-ph-pencil-line-duotone',
+                                        click: () => console.log(`Edit ${row}`),
+                                    },
+                                ],
                                 [{
                                     label: 'Delete',
                                     icon: 'i-ph-trash-duotone',
@@ -159,8 +166,8 @@
                         </UDropdown>
                     </template>
                 </UTable>
-                <UButton @click="openModal" class="new-trade-btn" size="md">
-                    <UIcon name="i-ph-plus-duotone"/>New Trade
+                <UButton @click="openModal()" class="new-trade-btn" icon="i-ph-plus-duotone">
+                    New Trade
                 </UButton>
             </div>
         </div>
@@ -178,12 +185,35 @@
                         />
                     </div>
                 </template>
+                <UForm @submit="onNewTradeSubmit" :state="newTradeState" :validate="newTradeValidate">
+                    <UFormGroup name="time" label="Trade Time" required>
+                        <UInput v-model="newTradeState.time" type="datetime-local"/>
+                    </UFormGroup>
+                    <UFormGroup name="instrument" label="Instrument" required>
+                        <UInput v-model="newTradeState.instrument" icon="i-ph-presentation-chart-duotone"/>
+                    </UFormGroup>
+                    <UFormGroup name="isBuy" label="Trend" required>
+                        <USelect v-model="newTradeState.isBuy" :options="isBuyOptions" icon="i-ph-trend-up-duotone"/>
+                    </UFormGroup>
+                    <UFormGroup name="margin" label="Margin" type="number" required>
+                        <UInput v-model="newTradeState.margin" icon="i-ph-currency-eur-duotone"/>
+                    </UFormGroup>
+                    <UFormGroup name="risk" label="Risk / Reward Ratio" type="number" required>
+                        <UInput v-model="newTradeState.risk" icon="i-ph-percent-duotone"/>
+                    </UFormGroup>
+                    <UFormGroup name="result" label="Result" type="number">
+                        <UInput v-model="newTradeState.result" icon="i-ph-equals-duotone"/>
+                    </UFormGroup>
+                    <UButton type="submit" icon="i-ph-plus-duotone">Create Trade</UButton>
+                </UForm>
             </UCard>
         </UModal>
     </div>
 </template>
 
 <script lang="ts" setup>
+    import type { FormError, FormSubmitEvent } from "#ui/types";
+
     const columns = [
         {
             key: "instrument",
@@ -245,8 +275,37 @@
         },
     ];
 
+    const isBuyOptions = [
+        {label: 'BUY', value: true},
+        {label: 'SELL', value: false},
+    ];
+
     const selectedDate = ref<Date>(new Date());
     const modal = ref<boolean>(false);
+
+    const newTradeState = reactive({
+        time: undefined,
+        instrument: undefined,
+        isBuy: undefined,
+        margin: undefined,
+        risk: undefined,
+        result: undefined,
+    });
+
+    const newTradeValidate = () : FormError[] => {
+        const errors = [];
+        if (!newTradeState.time) errors.push({ path: "time", message: "Required" });
+        if (!newTradeState.instrument) errors.push({ path: "instrument", message: "Required" });
+        if (!newTradeState.isBuy) errors.push({ path: "isBuy", message: "Required" });
+        if (!newTradeState.margin) errors.push({ path: "margin", message: "Required" });
+        if (!newTradeState.risk) errors.push({ path: "risk", message: "Required" });
+        return errors
+    }
+
+    async function onNewTradeSubmit(event : FormSubmitEvent<any>) {
+        console.log(event.data);
+        closeModal();
+    }
 
     const viewedDates = computed(() => {
         return getMonthDates(selectedDate.value.getFullYear(), selectedDate.value.getMonth()+1);
