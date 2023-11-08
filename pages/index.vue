@@ -185,7 +185,7 @@
                         />
                     </div>
                 </template>
-                <UForm @submit="onNewTradeSubmit" :state="newTradeState" :validate="newTradeValidate">
+                <UForm @submit="onNewTradeSubmit" :state="newTradeState" :validate="newTradeValidate" class="new-trade-form">
                     <UFormGroup name="time" label="Trade Time" required>
                         <UInput v-model="newTradeState.time" type="datetime-local"/>
                     </UFormGroup>
@@ -212,7 +212,9 @@
 </template>
 
 <script lang="ts" setup>
-    import type { FormError, FormSubmitEvent } from "#ui/types";
+    import type { FormSubmitEvent } from "#ui/types";
+    import useVuelidate from "@vuelidate/core";
+    import { required, decimal } from "@vuelidate/validators";
 
     const columns = [
         {
@@ -291,21 +293,17 @@
         risk: undefined,
         result: undefined,
     });
+    
+    const newTradeRules = {
+        time: { required },
+        instrument: { required },
+        isBuy: { required },
+        margin: { required, decimal },
+        risk: { required, decimal },
+        result: { decimal },
+    };
 
-    const newTradeValidate = () : FormError[] => {
-        const errors = [];
-        if (!newTradeState.time) errors.push({ path: "time", message: "Required" });
-        if (!newTradeState.instrument) errors.push({ path: "instrument", message: "Required" });
-        if (!newTradeState.isBuy) errors.push({ path: "isBuy", message: "Required" });
-        if (!newTradeState.margin) errors.push({ path: "margin", message: "Required" });
-        if (!newTradeState.risk) errors.push({ path: "risk", message: "Required" });
-        return errors
-    }
-
-    async function onNewTradeSubmit(event : FormSubmitEvent<any>) {
-        console.log(event.data);
-        closeModal();
-    }
+    const v$ = useVuelidate(newTradeRules, newTradeState);
 
     const viewedDates = computed(() => {
         return getMonthDates(selectedDate.value.getFullYear(), selectedDate.value.getMonth()+1);
@@ -367,6 +365,20 @@
 
     function closeModal() {
         modal.value = false;
+    }
+
+    async function newTradeValidate() {
+        v$.value.$touch();
+        await v$.value.$validate();
+        return v$.value.$errors.map((error) => ({
+            message: error.$message,
+            path: error.$propertyPath,
+        }));
+    }
+
+    async function onNewTradeSubmit(event : FormSubmitEvent<any>) {
+        console.log(event.data);
+        closeModal();
     }
 </script>
 
@@ -565,6 +577,19 @@
 
     .modal-header-title {
         color: var(--color-text);
+    }
+
+    .new-trade-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .new-trade-form button[type="submit"] {
+        width: fit-content;
+        grid-column: span 2;
+        margin-left: auto;
+        margin-top: 1rem;
     }
 
     @media only screen and (max-width: 1488px) {
