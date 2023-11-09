@@ -193,7 +193,7 @@
                         <UInput v-model="newTradeState.instrument" icon="i-ph-presentation-chart-duotone"/>
                     </UFormGroup>
                     <UFormGroup name="isBuy" label="Trend" required>
-                        <USelect v-model="newTradeState.isBuy" :options="isBuyOptions" icon="i-ph-trend-up-duotone"/>
+                        <USelect v-model="newTradeState.isBuy" :options="[{label: 'BUY', value: true}, {label: 'SELL', value: false}]" icon="i-ph-trend-up-duotone"/>
                     </UFormGroup>
                     <UFormGroup name="margin" label="Margin" type="number" required>
                         <UInput v-model="newTradeState.margin" icon="i-ph-currency-eur-duotone"/>
@@ -275,11 +275,6 @@
             risk: 1.45,
             result: 2.8,
         },
-    ];
-
-    const isBuyOptions = [
-        {label: 'BUY', value: true},
-        {label: 'SELL', value: false},
     ];
 
     const selectedDate = ref<Date>(new Date());
