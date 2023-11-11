@@ -38,6 +38,23 @@
             <div class="summary-container">
                 <div class="summary-container-txt">
                     <span class="summary-container-title">
+                        Profit Factor
+                        <UTooltip text="Average risk/reward ratio of a trade.">
+                            <UIcon name="i-ph-info-duotone"/>
+                        </UTooltip>
+                    </span>
+                    <span class="summary-container-value">0.43</span>
+                </div>
+                <UButton
+                    icon="i-ph-compass-tool-duotone"
+                    size="xl"
+                    variant="soft"
+                    color="primary"
+                />
+            </div>
+            <div class="summary-container">
+                <div class="summary-container-txt">
+                    <span class="summary-container-title">
                         Win Rate
                         <UTooltip text="Average chance for a win trade.">
                             <UIcon name="i-ph-info-duotone"/>
@@ -47,32 +64,11 @@
                 </div>
                 <v-progress-circular
                     :model-value="25"
-                    color="var(--color-primary)"
-                    bg-color="var(--color-red)"
                     :size="96"
                     :width="8"
-                    style="stroke-linecap: round;"
-                />
-            </div>
-            <div class="summary-container">
-                <div class="summary-container-txt">
-                    <span class="summary-container-title">
-                        Profit Factor
-                        <UTooltip text="Average risk/reward ratio of a trade.">
-                            <UIcon name="i-ph-info-duotone"/>
-                        </UTooltip>
-                    </span>
-                    <span class="summary-container-value">0.43</span>
-                </div>
-                <v-progress-linear
-                    :model-value="43"
                     color="var(--color-primary)"
                     bg-color="var(--color-red)"
-                    :height="8"
-                    :bg-opacity="1"
-                    :rounded="true"
-                    :rounded-bar="true"
-                    style="left: 0; transform: translateX(0);"
+                    style="stroke-linecap: round;"
                 />
             </div>
         </div>
@@ -127,7 +123,7 @@
                 <hr class="trades-divider">
                 <UTable
                     class="trades-table"
-                    :rows="trades"
+                    :rows="viewedTrades"
                     :columns="columns"
                     :empty-state="{ icon: 'i-ph-folder-notch-open-duotone', label: 'No trades.' }"
                 >
@@ -255,7 +251,7 @@
         },
     ];
 
-    const trades : Trade[] = [
+    const trades = ref<Trade[]>([
         {
             id: 0,
             time: new Date(),
@@ -292,7 +288,7 @@
             risk: 2,
             result: null,
         },
-    ];
+    ]);
 
     const selectedDate = ref<Date>(new Date());
     const modal = ref<boolean>(false);
@@ -327,6 +323,15 @@
 
     const viewedDates = computed(() => {
         return getMonthDates(selectedDate.value.getFullYear(), selectedDate.value.getMonth()+1);
+    });
+
+    const viewedTrades = computed(() => {
+        const viewedTrades : Trade[] = [];
+        trades.value.map(trade => {
+            if (trade.time.toDateString() === selectedDate.value.toDateString())
+                viewedTrades.push(trade);
+        });
+        return viewedTrades;
     });
 
     function getMonthDates(year : number, month : number) : Date[] {
@@ -415,7 +420,7 @@
         result: string | null,
     }>) {
         const newTrade = {
-            id: editedTradeId.value !== null ? editedTradeId.value : trades.length,
+            id: editedTradeId.value !== null ? editedTradeId.value : trades.value.length,
             time: new Date(event.data.time),
             instrument: event.data.instrument,
             isBuy: JSON.parse(event.data.isBuy),
@@ -426,8 +431,8 @@
                 : parseFloat(event.data.result),
         };
 
-        if (editedTradeId.value) trades[editedTradeId.value] = newTrade;
-        else trades.push(newTrade);
+        if (editedTradeId.value) trades.value[editedTradeId.value] = newTrade;
+        else trades.value.push(newTrade);
 
         closeModal();
     }
@@ -451,7 +456,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 1rem;
+        gap: 4rem;
         padding: 2rem;
     }
 
