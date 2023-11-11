@@ -510,55 +510,62 @@
         padding-top: 2rem;
     }
 
-    .calendar-weekday, .calendar-day {
-        border: 1px solid var(--color-bg-tertiary);
-        border-radius: .5rem;
-    }
-
     .calendar-weekday {
         padding: .25rem 0;
         text-align: center;
         font-weight: bold;
         color: var(--color-text-alt);
+        border: 1px solid var(--color-bg-tertiary);
+        border-radius: .5rem;
     }
 
     .calendar-day {
+        --_color-bg: transparent;
+        --_color-border: var(--color-text-alt);
+        --_color-calendar-day-result: var(--color-text);
+
         min-height: 6rem;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         justify-content: center;
         padding: 0 1rem;
+        background-color: var(--_color-bg);
+        border: 1px solid var(--_color-border);
+        border-radius: .5rem;
+    }
+
+    .calendar-day.calendar-day.irrelevant {
+        --_color-bg: transparent;
+        --_color-border: var(--color-bg-tertiary);
     }
 
     .calendar-day.irrelevant > * {
         display: none;
     }
 
-    .calendar-day:not(.irrelevant) {
-        border-color: var(--color-text-alt);
+    .calendar-day.win {
+        --_color-border: transparent;
+        --_color-bg: var(--color-primary-alt);
+        --_color-calendar-day-result: var(--color-primary);
     }
 
-    .calendar-day:not(.irrelevant).win {
-        background-color: var(--color-primary-alt);
-        border-color: transparent;
-    }
-
-    .calendar-day:not(.irrelevant).lose {
-        background-color: var(--color-red-alt);
-        border-color: transparent;
+    .calendar-day.lose {
+        --_color-bg: var(--color-red-alt);
+        --_color-border: transparent;
+        --_color-calendar-day-result: var(--color-red);
     }
 
     .calendar-day.selected {
-        border-color: var(--color-text);
+        --_color-border: var(--color-text);
     }
 
     .calendar-day.selected.win {
-        border-color: var(--color-primary);
+        --_color-border: var(--color-primary);
     }
 
     .calendar-day.selected.lose {
-        border-color: var(--color-red);
+        --_color-border: var(--color-red);
     }
 
     .calendar-day-index, .calendar-day-tradecount {
@@ -570,15 +577,8 @@
     }
 
     .calendar-day-result {
+        color: var(--_color-calendar-day-result);
         font-weight: bold;
-    }
-
-    .calendar-day.win .calendar-day-result {
-        color: var(--color-primary);
-    }
-
-    .calendar-day.lose .calendar-day-result {
-        color: var(--color-red);
     }
 
     .trades-table {
