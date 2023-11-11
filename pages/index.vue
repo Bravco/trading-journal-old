@@ -137,8 +137,11 @@
                     <template #margin-data="{ row }">
                         <span>{{ `€ ${row.margin}` }}</span>
                     </template>
+                    <template #risk-data="{ row }">
+                        <span>{{ row.risk.toFixed(2) }}</span>
+                    </template>
                     <template #result-data="{ row }">
-                        <span :class="['trades-table-result', row.result < 0 ? 'lose' : 'win']">{{ `€ ${row.result < 0 ? '' : '+'}${row.result.toFixed(2)}` }}</span>
+                        <span v-if="row.result" :class="['trades-table-result', row.result < 0 ? 'lose' : 'win']">{{ `€ ${row.result < 0 ? '' : '+'}${row.result.toFixed(2)}` }}</span>
                     </template>
                     <template #actions-data="{ row }">
                         <UDropdown
@@ -152,7 +155,7 @@
                                     {
                                         label: 'Edit',
                                         icon: 'i-ph-pencil-line-duotone',
-                                        click: () => console.log(`Edit ${row}`),
+                                        click: () => openModal(row),
                                     },
                                 ],
                                 [{
@@ -185,7 +188,7 @@
                         />
                     </div>
                 </template>
-                <UForm @submit="onNewTradeSubmit" :state="newTradeState" :validate="newTradeValidate" class="new-trade-form">
+                <UForm @submit="onModalSubmit" :state="newTradeState" :validate="newTradeValidate" class="new-trade-form">
                     <UFormGroup name="time" label="Trade Time" required>
                         <UInput v-model="newTradeState.time" type="datetime-local"/>
                     </UFormGroup>
@@ -216,6 +219,16 @@
     import useVuelidate from "@vuelidate/core";
     import { required, decimal } from "@vuelidate/validators";
 
+    type Trade = {
+        id: number,
+        time: Date,
+        instrument: string,
+        isBuy: boolean,
+        margin: number,
+        risk: number,
+        result: number | null,
+    };
+
     const columns = [
         {
             key: "instrument",
@@ -242,9 +255,10 @@
         },
     ];
 
-    const trades = [
+    const trades : Trade[] = [
         {
             id: 0,
+            time: new Date(),
             instrument: "EURUSD",
             isBuy: true,
             margin: 100.26,
@@ -253,6 +267,7 @@
         },
         {
             id: 1,
+            time: new Date(),
             instrument: "AUDUSD",
             isBuy: true,
             margin: 99.12,
@@ -261,6 +276,7 @@
         },
         {
             id: 2,
+            time: new Date(),
             instrument: "GBPUSD",
             isBuy: false,
             margin: 115.33,
@@ -269,24 +285,33 @@
         },
         {
             id: 3,
+            time: new Date(),
             instrument: "GOLD",
             isBuy: true,
             margin: 107.54,
-            risk: 1.45,
-            result: 2.8,
+            risk: 2,
+            result: null,
         },
     ];
 
     const selectedDate = ref<Date>(new Date());
     const modal = ref<boolean>(false);
+    const editedTradeId = ref<number | null>(null);
 
-    const newTradeState = reactive({
-        time: undefined,
-        instrument: undefined,
-        isBuy: undefined,
-        margin: undefined,
-        risk: undefined,
-        result: undefined,
+    const newTradeState : {
+        time: string | null
+        instrument: string | null,
+        isBuy: string | null,
+        margin: number | null,
+        risk: number | null,
+        result: number | null,
+    } = reactive({
+        time: null,
+        instrument: null,
+        isBuy: null,
+        margin: null,
+        risk: null,
+        result: null,
     });
     
     const newTradeRules = {
@@ -354,12 +379,22 @@
         }
     }
 
-    function openModal() {
+    function openModal(trade : Trade | null = null) {
+        if (trade) {
+            editedTradeId.value = trade.id;
+            newTradeState.time = trade.time.toISOString().slice(0, 16);
+            newTradeState.instrument = trade.instrument;
+            newTradeState.isBuy = trade.isBuy.toString();
+            newTradeState.margin = trade.margin;
+            newTradeState.risk = trade.risk;
+            newTradeState.result = trade.result;
+        }
         modal.value = true;
     }
 
     function closeModal() {
         modal.value = false;
+        editedTradeId.value = null;
     }
 
     async function newTradeValidate() {
@@ -371,8 +406,29 @@
         }));
     }
 
-    async function onNewTradeSubmit(event : FormSubmitEvent<any>) {
-        console.log(event.data);
+    async function onModalSubmit(event : FormSubmitEvent<{
+        time: string
+        instrument: string,
+        isBuy: string,
+        margin: string,
+        risk: string,
+        result: string | null,
+    }>) {
+        const newTrade = {
+            id: editedTradeId.value !== null ? editedTradeId.value : trades.length,
+            time: new Date(event.data.time),
+            instrument: event.data.instrument,
+            isBuy: JSON.parse(event.data.isBuy),
+            margin: parseFloat(event.data.margin),
+            risk: parseFloat(event.data.risk),
+            result: event.data.result === null || event.data.result === "" 
+                ? null 
+                : parseFloat(event.data.result),
+        };
+
+        if (editedTradeId.value) trades[editedTradeId.value] = newTrade;
+        else trades.push(newTrade);
+
         closeModal();
     }
 </script>
