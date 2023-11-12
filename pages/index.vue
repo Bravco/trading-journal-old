@@ -4,10 +4,11 @@
             <div class="summary-container">
                 <div class="summary-container-txt">
                     <span class="summary-container-title">
-                        Average Margin
-                        <UTooltip text="Average margin of your entries.">
+                        Net P&L
+                        <UTooltip text="Your total amount of your profits and losses.">
                             <UIcon name="i-ph-info-duotone"/>
                         </UTooltip>
+                        <UBadge variant="soft" color="gray">12</UBadge>
                     </span>
                     <span class="summary-container-value">€ 107.29</span>
                 </div>
@@ -22,7 +23,7 @@
                 <div class="summary-container-txt">
                     <span class="summary-container-title">
                         Trade Expectancy
-                        <UTooltip text="Average result value.">
+                        <UTooltip text="Average outcome value of your trades.">
                             <UIcon name="i-ph-info-duotone"/>
                         </UTooltip>
                     </span>
@@ -39,7 +40,7 @@
                 <div class="summary-container-txt">
                     <span class="summary-container-title">
                         Profit Factor
-                        <UTooltip text="Average risk/reward ratio of a trade.">
+                        <UTooltip text="Average risk/reward ratio of your trades.">
                             <UIcon name="i-ph-info-duotone"/>
                         </UTooltip>
                     </span>
@@ -56,9 +57,11 @@
                 <div class="summary-container-txt">
                     <span class="summary-container-title">
                         Win Rate
-                        <UTooltip text="Average chance for a win trade.">
+                        <UTooltip text="Average chance to win a trade.">
                             <UIcon name="i-ph-info-duotone"/>
                         </UTooltip>
+                        <UBadge variant="soft" color="primary">1</UBadge>
+                        <UBadge variant="soft" color="brink-pink">3</UBadge>
                     </span>
                     <span class="summary-container-value">% 25.00</span>
                 </div>
@@ -67,7 +70,7 @@
                     :size="96"
                     :width="8"
                     color="var(--color-primary)"
-                    bg-color="var(--color-red)"
+                    bg-color="var(--color-brink-pink)"
                     style="stroke-linecap: round;"
                 />
             </div>
@@ -146,12 +149,12 @@
                                     {
                                         label: 'View',
                                         icon: 'i-ph-eye-duotone',
-                                        click: () => console.log(`View ${row}`),
+                                        click: () => openViewModal(row),
                                     },
                                     {
                                         label: 'Edit',
                                         icon: 'i-ph-pencil-line-duotone',
-                                        click: () => openModal(row),
+                                        click: () => openEditModal(row),
                                     },
                                 ],
                                 [{
@@ -165,22 +168,22 @@
                         </UDropdown>
                     </template>
                 </UTable>
-                <UButton @click="openModal()" class="new-trade-btn" icon="i-ph-plus-duotone">
+                <UButton @click="openEditModal()" class="new-trade-btn" icon="i-ph-plus-duotone">
                     New Trade
                 </UButton>
             </div>
         </div>
-        <UModal v-model="modal" prevent-close>
+        <UModal v-model="editModal" prevent-close>
             <UCard>
                 <template #header>
                     <div class="modal-header">
-                        <h1 class="modal-header-title">{{ editedTradeId ? 'Edit Trade' : 'New Trade' }}</h1>
+                        <h1>{{ editedTradeId ? 'Edit Trade' : 'New Trade' }}</h1>
                         <UButton
                             icon="i-ph-x-duotone"
                             variant="ghost"
                             color="gray"
                             square
-                            @click="closeModal()"
+                            @click="closeEditModal()"
                         />
                     </div>
                 </template>
@@ -203,8 +206,27 @@
                     <UFormGroup name="result" label="Result" type="number">
                         <UInput v-model="newTradeState.result" icon="i-ph-equals-duotone"/>
                     </UFormGroup>
-                    <UButton type="submit" icon="i-ph-plus-duotone">Create Trade</UButton>
+                    <UButton type="submit" icon="i-ph-plus-duotone">{{ editedTradeId ? 'Update Trade' : 'Create Trade' }}</UButton>
                 </UForm>
+            </UCard>
+        </UModal>
+        <UModal v-model="viewModal">
+            <UCard>
+                <template #header>
+                    <div class="modal-header">
+                        <h1>View Trade</h1>
+                        <UButton
+                            icon="i-ph-x-duotone"
+                            variant="ghost"
+                            color="gray"
+                            square
+                            @click="closeViewModal()"
+                        />
+                    </div>
+                </template>
+                <p>
+                    {{ viewedTrade }}
+                </p>
             </UCard>
         </UModal>
     </div>
@@ -291,8 +313,10 @@
     ]);
 
     const selectedDate = ref<Date>(new Date());
-    const modal = ref<boolean>(false);
+    const editModal = ref<boolean>(false);
     const editedTradeId = ref<number | null>(null);
+    const viewModal = ref<boolean>(false);
+    const viewedTrade = ref<Trade | null>(null);
 
     const newTradeState : {
         time: string | null
@@ -384,7 +408,7 @@
         }
     }
 
-    function openModal(trade : Trade | null = null) {
+    function openEditModal(trade : Trade | null = null) {
         if (trade) {
             editedTradeId.value = trade.id;
             newTradeState.time = trade.time.toISOString().slice(0, 16);
@@ -394,12 +418,22 @@
             newTradeState.risk = trade.risk;
             newTradeState.result = trade.result;
         }
-        modal.value = true;
+        editModal.value = true;
     }
 
-    function closeModal() {
-        modal.value = false;
+    function closeEditModal() {
+        editModal.value = false;
         editedTradeId.value = null;
+    }
+
+    function openViewModal(trade : Trade) {
+        viewedTrade.value = trade;
+        viewModal.value = true;
+    }
+
+    function closeViewModal() {
+        viewedTrade.value = null;
+        viewModal.value = false;
     }
 
     async function newTradeValidate() {
@@ -434,7 +468,7 @@
         if (editedTradeId.value) trades.value[editedTradeId.value] = newTrade;
         else trades.value.push(newTrade);
 
-        closeModal();
+        closeEditModal();
     }
 </script>
 
@@ -456,7 +490,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 4rem;
+        gap: 2rem;
         padding: 2rem;
     }
 
@@ -556,9 +590,9 @@
     }
 
     .calendar-day.lose {
-        --_color-bg: var(--color-red-alt);
+        --_color-bg: var(--color-brink-pink-alt);
         --_color-border: transparent;
-        --_color-calendar-day-result: var(--color-red);
+        --_color-calendar-day-result: var(--color-brink-pink);
     }
 
     .calendar-day.selected {
@@ -570,7 +604,7 @@
     }
 
     .calendar-day.selected.lose {
-        --_color-border: var(--color-red);
+        --_color-border: var(--color-brink-pink);
     }
 
     .calendar-day-index, .calendar-day-tradecount {
@@ -603,8 +637,8 @@
     }
 
     .trades-table-trend.sell {
-        color: var(--color-red);
-        background-color: var(--color-red-alt);
+        color: var(--color-brink-pink);
+        background-color: var(--color-brink-pink-alt);
     }
 
     .trades-table-result {
@@ -616,7 +650,7 @@
     }
 
     .trades-table-result.lose {
-        color: var(--color-red);
+        color: var(--color-brink-pink);
     }
 
     .new-trade-btn {
@@ -629,10 +663,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-    }
-
-    .modal-header-title {
-        color: var(--color-text);
     }
 
     .new-trade-form {

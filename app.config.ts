@@ -7,5 +7,6 @@ export default defineAppConfig({
         card: { background: "bg-gray-900" },
         input: { default: { color: "gray" } },
         select: { default: { color: "gray" } },
+        modal: { background: "bg-gray-900" },
     },
 });
