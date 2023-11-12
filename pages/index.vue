@@ -174,7 +174,7 @@
             <UCard>
                 <template #header>
                     <div class="modal-header">
-                        <h1 class="modal-header-title">New Trade</h1>
+                        <h1 class="modal-header-title">{{ editedTradeId ? 'Edit Trade' : 'New Trade' }}</h1>
                         <UButton
                             icon="i-ph-x-duotone"
                             variant="ghost"
