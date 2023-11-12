@@ -173,7 +173,7 @@
                 </UButton>
             </div>
         </div>
-        <UModal v-model="editModal" prevent-close>
+        <UModal v-model="editModal" @close="closeEditModal()">
             <UCard>
                 <template #header>
                     <div class="modal-header">
@@ -195,7 +195,16 @@
                         <UInput v-model="newTradeState.instrument" icon="i-ph-presentation-chart-duotone"/>
                     </UFormGroup>
                     <UFormGroup name="isBuy" label="Trend" required>
-                        <USelect v-model="newTradeState.isBuy" :options="[{label: 'BUY', value: true}, {label: 'SELL', value: false}]" icon="i-ph-trend-up-duotone"/>
+                        <USelectMenu v-model="newTradeState.isBuy" :options="['true', 'false']" icon="i-ph-trend-up-duotone">
+                            <template v-if="newTradeState.isBuy !== null" #label>
+                                <span :class="[JSON.parse(newTradeState.isBuy) ? 'bg-primary-400' : 'bg-brink-pink-400', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']" aria-hidden="true"/>
+                                <span>{{ JSON.parse(newTradeState.isBuy) ? 'BUY' : 'SELL' }}</span>
+                            </template>
+                            <template #option="{ option }">
+                                <span :class="[JSON.parse(option) ? 'bg-primary-400' : 'bg-brink-pink-400', 'inline-block h-2 w-2 flex-shrink-0 rounded-full']" aria-hidden="true"/>
+                                <span>{{ JSON.parse(option) ? 'BUY' : 'SELL' }}</span>
+                            </template>
+                        </USelectMenu>
                     </UFormGroup>
                     <UFormGroup name="margin" label="Margin" type="number" required>
                         <UInput v-model="newTradeState.margin" icon="i-ph-currency-eur-duotone"/>
@@ -210,7 +219,7 @@
                 </UForm>
             </UCard>
         </UModal>
-        <UModal v-model="viewModal">
+        <UModal v-model="viewModal" @close="closeViewModal()">
             <UCard>
                 <template #header>
                     <div class="modal-header">
@@ -244,6 +253,15 @@
         isBuy: boolean,
         margin: number,
         risk: number,
+        result: number | null,
+    };
+
+    type NewTradeState = {
+        time: string | null
+        instrument: string | null,
+        isBuy: string | null,
+        margin: number | null,
+        risk: number | null,
         result: number | null,
     };
 
@@ -318,14 +336,7 @@
     const viewModal = ref<boolean>(false);
     const viewedTrade = ref<Trade | null>(null);
 
-    const newTradeState : {
-        time: string | null
-        instrument: string | null,
-        isBuy: string | null,
-        margin: number | null,
-        risk: number | null,
-        result: number | null,
-    } = reactive({
+    const newTradeState : NewTradeState = reactive({
         time: null,
         instrument: null,
         isBuy: null,
@@ -424,6 +435,7 @@
     function closeEditModal() {
         editModal.value = false;
         editedTradeId.value = null;
+        Object.keys(newTradeState).forEach(key => newTradeState[key as keyof NewTradeState] = null);
     }
 
     function openViewModal(trade : Trade) {
