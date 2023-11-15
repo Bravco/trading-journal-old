@@ -233,9 +233,50 @@
                         />
                     </div>
                 </template>
-                <p>
-                    {{ viewedTrade }}
-                </p>
+                <div class="viewed-trade-form">
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Trade Time</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-calendar-blank-duotone"/>
+                            {{ viewedTrade?.time.toLocaleString().slice(0, 18) }}
+                        </span>
+                    </div>
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Instrument</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-presentation-chart-duotone"/>
+                            {{ viewedTrade?.instrument }}
+                        </span>
+                    </div>
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Trend</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-trend-up-duotone"/>
+                            {{ viewedTrade?.isBuy ? "BUY" : "SELL" }}
+                        </span>
+                    </div>
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Margin</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-currency-eur-duotone"/>
+                            {{ viewedTrade?.margin.toFixed(2) }}
+                        </span>
+                    </div>
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Risk</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-percent-duotone"/>
+                            {{ viewedTrade?.risk.toFixed(2) }}
+                        </span>
+                    </div>
+                    <div class="viewed-trade-item">
+                        <p class="viewed-trade-item-title">Result</p>
+                        <span class="viewed-trade-item-content">
+                            <UIcon class="text-gray-500" name="i-ph-equals-duotone"/>
+                            {{ viewedTrade?.result === null ? '' : viewedTrade?.result.toFixed(2)  }}
+                        </span>
+                    </div>
+                </div>
             </UCard>
         </UModal>
     </div>
@@ -690,6 +731,33 @@
         margin-top: 1rem;
     }
 
+    .viewed-trade-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .viewed-trade-item {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+    }
+
+    .viewed-trade-item-title {
+        font-size: .85rem;
+    }
+
+    .viewed-trade-item-content {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .2rem .5rem;
+        background-color: var(--color-bg-tertiary);
+        border: 1px solid rgb(var(--color-gray-700));
+        border-radius: .375rem;
+    }
+
     @media only screen and (max-width: 1488px) {
         .summary-wrapper {
             grid-template-columns: repeat(2, 1fr);
@@ -714,6 +782,16 @@
     @media only screen and (max-width: 768px) {
         .summary-wrapper {
             grid-template-columns: 1fr;
+        }
+    }
+
+    @media only screen and (max-width: 640px) {
+        .new-trade-form {
+            grid-template-columns: 1fr;
+        }
+
+        .new-trade-form button[type="submit"] {
+            grid-column: auto;
         }
     }
 </style>
